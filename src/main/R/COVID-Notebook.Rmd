@@ -1,0 +1,64 @@
+---
+title: "COVID Notebook"
+output:
+  html_notebook: default
+  
+---
+
+# Data
+
+https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
+
+
+```{r echo=TRUE}
+sourceConfirmed <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
+
+sourceDeceased <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
+
+dataConfirmed <- read.csv(sourceConfirmed)
+
+dataDeceased <- read.csv(sourceDeceased)
+
+#print(str(dataConfirmed))
+#print(str(dataDeceased))
+
+```
+
+```{r echo=TRUE}
+dataConfirmedBelgium <- dataConfirmed[dataConfirmed$Country.Region == "Belgium", ]
+dataPointsConfirmedBelgium <-  dataConfirmedBelgium[,c(4:ncol(dataBelgium))]
+
+dataDeceasedBelgium <- dataDeceased[dataDeceased$Country.Region == "Belgium", ]
+dataPointsDeceasedBelgium <-  dataDeceasedBelgium[,c(4:ncol(dataBelgium))]
+
+cleanDate <- function(s) {
+   p<-unlist(strsplit(lastName,"X|\\."))
+   return(paste0(p[3],"/",p[2],"/20",p[4]))
+}
+
+```
+
+```{r Confirmed, echo=TRUE, error=TRUE}
+
+plot(seq_along(dataPointsConfirmedBelgium),dataPointsConfirmedBelgium, xlab="days since 22/1/2020", ylab="confirmed cases", main=paste0("Belgium confirmed COVID-19 cases on ",cleanDate(tail(names(dataPointsConfirmedBelgium),1))),type="l",col="dark green")
+
+
+```
+
+
+```{r Deceased, echo=TRUE, error=TRUE}
+plot(seq_along(dataPointsDeceasedBelgium),dataPointsDeceasedBelgium, xlab="days since 22/1/2020", ylab="decased cases", main=paste0("Belgium deceased COVID-19 cases on ",cleanDate(tail(names(dataPointsDeceasedBelgium),1))),type="l",col="dark red")
+```
+
+
+```{r Confirmed Log, echo=TRUE, error=TRUE}
+
+plot(seq_along(dataPointsConfirmedBelgium),log(dataPointsConfirmedBelgium), xlab="days since 22/1/2020", ylab="log(confirmed cases)", main=paste0("Belgium confirmed COVID-19 cases on ",cleanDate(tail(names(dataPointsConfirmedBelgium),1))),type="l",col="dark green")
+
+
+```
+
+
+```{r Deceased Log, echo=TRUE, error=TRUE}
+plot(seq_along(dataPointsDeceasedBelgium),log(dataPointsDeceasedBelgium), xlab="days since 22/1/2020", ylab="log(decased cases)", main=paste0("Belgium deceased COVID-19 cases on ",cleanDate(tail(names(dataPointsDeceasedBelgium),1))),type="l",col="dark red")
+```
