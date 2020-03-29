@@ -61,9 +61,54 @@ cleanDate <- function(s) {
 
 ```{r Confirmed, echo=TRUE, error=TRUE}
 
-plot(seq_along(dataPointsConfirmed),dataPointsConfirmed, xlab="days since 22/1/2020", ylab="confirmed cases", main=paste0(country, " confirmed COVID-19 cases on ",cleanDate(tail(names(dataPointsConfirmed),1))),type="l",col="dark green")
+  #plot(xrange,yrange, xlim=xrange, ylim=yrange, main="",
+  #       ylab="",type="n", yaxt="n", xaxt="n")
+    
+  # axis(side = 2, at =ithyPositions, labels = ithyLabels)
+    
+  #  mtext(itemsubtitle,  side=1, line = -2, adj=0.9, cex=1.1)
+    
+  #  points(head(ith$breaks, -1), # do not use latest break for proper plotting
+  #         -ith$counts,
+  #         type="h",       # histogram style
+  #         col="blue",     # color of bars
+  #         lend=4,         # 
+  #         lwd=5)          # line width for drawing symbols
+    
+  #    mtext(
+  #      paste0("Mean Locs:",round(ithMean, digits=3)),
+  #      side=1, 
+  #      line = -3, 
+  #      adj=0.1,
+  #      cex=0.6)
+  
+  #  abline(h=(-max(ith$counts))/2.0,col="blue", lty=3)
+  #    axis(1,
+  #        at=seq(floor(xrange[1]),ceiling(xrange[2])),
+  #        cex.axis=1.0,
+  #        padj=-1.5)
 
+ymax <- max(dataPointsConfirmed)
+yrange <- c(0, (floor(ymax/1000.0)+1)*1000)
+xvalues <- seq_along(dataPointsConfirmed)
 
+plot(
+  xvalues,
+  dataPointsConfirmed, 
+  xlab="days since 22/1/2020", 
+  ylab="confirmed cases", 
+  main=paste0(country, " confirmed COVID-19 cases on ",cleanDate(tail(names(dataPointsConfirmed),1))),
+  type="l",
+  lwd=2,
+  col="dark green",
+  ylim=yrange)
+
+abline(h=ymax, col="dark green", lty=4)
+text(
+  tail(xvalues,1)*0.95,
+  (ymax * 1.03),
+  paste("Max:",ymax),
+  cex=0.6)
 ```
 
 
