@@ -10,14 +10,26 @@ output:
 
 https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
 
+We hope we'll soon get proper data from
 
-```{r echo=TRUE}
+https://epistat.wiv-isp.be/covid/
+
+At this point, nothing is available.
+
+```{r Sources, echo=TRUE}
 sourceConfirmed <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
 
 sourceDeceased <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
 
 sourceRecovered <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
 
+sourceEschnou <- "https://raw.githubusercontent.com/eschnou/covid19-be/master/covid19-belgium.csv"
+```
+
+```{r Read Source JH, echo=TRUE}
+
+require(lubridate)
+#require(glue)
 
 dataConfirmed <- read.csv(sourceConfirmed)
 
@@ -25,11 +37,36 @@ dataDeceased <- read.csv(sourceDeceased)
 
 dataRecovered <- read.csv(sourceRecovered)
 
+
 #print(str(dataConfirmed))
 #print(str(dataDeceased))
 #print(str(dataRecovered))
 
 ```
+
+```{r Read Source Eschnou, echo=TRUE}
+
+# Damn UTF-8 BOM...
+dataEschnou <- read.csv(sourceEschnou, fileEncoding = "UTF-8-BOM")
+# print(str(dataEschnou))
+
+belgiumLatest<-tail(dataEschnou,1)
+parsedDate<-parse_date_time(as.character(belgiumLatest$date),c("dmy"))
+belgiumLatestDate<-gsub("#0", "", format(parsedDate,"X#%m.%d.%y"))
+
+latestBelgiumColumnConfirmed<-data.frame(belgiumLatest$cumul_cases)
+names(latestBelgiumColumnConfirmed)[1] <- belgiumLatestDate
+
+latestBelgiumColumnDeceased<-data.frame(belgiumLatest$cumul_deceased)
+names(latestBelgiumColumnDeceased)[1] <- belgiumLatestDate
+
+latestBelgiumColumnRecovered<-data.frame(belgiumLatest$cumul_released)
+names(latestBelgiumColumnRecovered)[1] <- belgiumLatestDate
+
+
+```
+
+
 
 ```{r echo=TRUE}
 
@@ -38,7 +75,7 @@ country="Belgium"
 
 dataPointsOfCountry <- function(rawDataset, countryName) {
   dataOfCountry <- rawDataset[rawDataset$Country.Region == country, ]
-  dataPointsOfCountry <-  dataOfCountry[,c(4:ncol(dataOfCountry))]
+  dataPointsOfCountry <-  dataOfCountry[,c(5:ncol(dataOfCountry))]
   return(dataPointsOfCountry)
 }
   
@@ -46,6 +83,13 @@ dataPointsOfCountry <- function(rawDataset, countryName) {
 dataPointsConfirmed <- dataPointsOfCountry(dataConfirmed, country)
 dataPointsDeceased <-  dataPointsOfCountry(dataDeceased, country)
 dataPointsRecovered <- dataPointsOfCountry(dataRecovered, country)
+
+
+if (country=="Belgium") {
+  dataPointsConfirmed <- cbind(dataPointsConfirmed,latestBelgiumColumnConfirmed)
+  dataPointsDeceased <- cbind(dataPointsDeceased,latestBelgiumColumnDeceased)
+  dataPointsRecovered <- cbind(dataPointsRecovered,latestBelgiumColumnRecovered)
+}
 
 
 cleanDate <- function(s) {
@@ -97,7 +141,10 @@ plot(
   dataPointsConfirmed, 
   xlab="days since 22/1/2020", 
   ylab="confirmed cases", 
-  main=paste0(country, " confirmed COVID-19 cases on ",cleanDate(tail(names(dataPointsConfirmed),1))),
+  main=paste0(
+    country, 
+    " confirmed COVID-19 cases on ",
+    cleanDate(tail(names(dataPointsConfirmed),1))),
   type="l",
   lwd=2,
   col="dark green",
