@@ -204,6 +204,31 @@ summary(fit)
 ```{r}
 cor(df2$total,predict(fit))
 ```
+
+```{r}
+require(nlstools)
+res<-nlsResiduals(fit)
+plot(res,which=0)
+```
+```{r}
+plot(res, which = 3)
+```
+
+
+```{r}
+plot(res, which = 5)
+```
+
+
+```{r}
+plot(res, which = 6)
+```
+
+```{r}
+test.nlsResiduals(res)
+```
+
+
 ## Predict data
 
 
