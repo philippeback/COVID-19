@@ -18,7 +18,7 @@ We hope we'll soon get proper data from
 
 https://epistat.wiv-isp.be/covid/
 
-At this point, nothing is available.
+Data is now available (31/3/2020)
 
 # Code
 
@@ -34,6 +34,8 @@ sourceDeceased <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/mas
 sourceRecovered <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
 
 sourceEschnou <- "https://raw.githubusercontent.com/eschnou/covid19-be/master/covid19-belgium.csv"
+
+sourceSciensanoHospitalized <- "https://epistat.sciensano.be/Data/COVID19BE_HOSP.csv"
 ```
 
 
@@ -77,6 +79,14 @@ names(latestBelgiumColumnRecovered)[1] <- belgiumLatestDate
 
 ```
 
+```{r Read Source Sciensano}
+
+dataSciensanoHospitalized <- read.csv(sourceSciensanoHospitalized)
+```
+
+```{r comment='', echo=FALSE, results='asis'}
+#knitr::kable(dataSciensanoHospitalized, caption = "Hospitalized Official", floating.environment="sidewaystable")
+```
 
 
 ```{r echo=FALSE}
@@ -254,11 +264,33 @@ abline(h=ypred_max,lty=2)
 text(x=100,y=ypred_max*1.04,paste0("max=",format(ypred_max,digits=0,scientific = FALSE)))
 lines(x,ypred,col="dark green",lty=1,lwd=3)
 ```
+# Sciensano ICU 
+
+```{r}
+totalICU <- dataSciensanoHospitalized %>% group_by(DATE) %>%summarize(TOTAL_IN_ICU = sum(TOTAL_IN_ICU))
+
+plot(TOTAL_IN_ICU ~ DATE,data=totalICU,type="p",main="Total in ICU Belgium")
+```
+# Sciensano in RESP
+
+```{r}
+totalRESP <- dataSciensanoHospitalized %>% group_by(DATE) %>%summarize(TOTAL_IN_RESP = sum(TOTAL_IN_RESP))
+
+plot(TOTAL_IN_RESP ~ DATE,data=totalRESP,type="p",main="Total in RESP Belgium")
+```
+
+# Sciensano ECMO
+
+```{r}
+totalECMO <- dataSciensanoHospitalized %>% group_by(DATE) %>%summarize(TOTAL_IN_ECMO = sum(TOTAL_IN_ECMO))
+
+plot(TOTAL_IN_ECMO ~ DATE,data=totalECMO,type="p",main="Total in ECMO Belgium")
+```
 
 # Links
 
 * https://www.statforbiology.com/nonlinearregression/usefulequations
-* https://www.r-bloggers.com/first-steps-with-non-linear-regression-in-r/
+* https://www.r-bloggers.com/first-steps-with-non-linear-regression-in-r
   
 
 
