@@ -267,7 +267,8 @@ lines(x,ypred,col="dark green",lty=1,lwd=3)
 # Sciensano ICU 
 
 ```{r}
-totalICU <- dataSciensanoHospitalized %>% group_by(DATE) %>%summarize(TOTAL_IN_ICU = sum(TOTAL_IN_ICU))
+require(dplyr)
+totalICU <- dataSciensanoHospitalized %>% group_by(DATE) %>% summarize(TOTAL_IN_ICU = sum(TOTAL_IN_ICU))
 
 plot(TOTAL_IN_ICU ~ DATE,data=totalICU,type="p",main="Total in ICU Belgium")
 ```
