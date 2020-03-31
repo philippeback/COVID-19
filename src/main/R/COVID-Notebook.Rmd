@@ -1,5 +1,5 @@
 ---
-title: "COVID Notebook"
+title: "COVID-19 Belgium Notebook"
 output:
   html_document:
     df_print: paged
@@ -10,13 +10,23 @@ output:
 
 https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series
 
+and
+
+https://github.com/eschnou/covid19-be
+
 We hope we'll soon get proper data from
 
 https://epistat.wiv-isp.be/covid/
 
 At this point, nothing is available.
 
-```{r Sources, echo=TRUE}
+# Code
+
+Code for the charts is available at https://github.com/philippeback/COVID-19/
+
+
+
+```{r Sources, echo=FALSE}
 sourceConfirmed <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
 
 sourceDeceased <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
@@ -26,7 +36,8 @@ sourceRecovered <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/ma
 sourceEschnou <- "https://raw.githubusercontent.com/eschnou/covid19-be/master/covid19-belgium.csv"
 ```
 
-```{r Read Source JH, echo=TRUE}
+
+```{r Read Source JH, echo=FALSE, warning=FALSE, error=FALSE}
 
 require(lubridate)
 #require(glue)
@@ -44,7 +55,7 @@ dataRecovered <- read.csv(sourceRecovered)
 
 ```
 
-```{r Read Source Eschnou, echo=TRUE}
+```{r Read Source Eschnou, echo=FALSE, warning=FALSE}
 
 # Damn UTF-8 BOM...
 dataEschnou <- read.csv(sourceEschnou, fileEncoding = "UTF-8-BOM")
@@ -68,7 +79,7 @@ names(latestBelgiumColumnRecovered)[1] <- belgiumLatestDate
 
 
 
-```{r echo=TRUE}
+```{r echo=FALSE}
 
 country="Belgium"
 #country="Netherlands"
@@ -103,34 +114,7 @@ cleanDate <- function(s) {
 
 ## Linear Figures
 
-```{r Confirmed, echo=TRUE, error=TRUE}
-
-  #plot(xrange,yrange, xlim=xrange, ylim=yrange, main="",
-  #       ylab="",type="n", yaxt="n", xaxt="n")
-    
-  # axis(side = 2, at =ithyPositions, labels = ithyLabels)
-    
-  #  mtext(itemsubtitle,  side=1, line = -2, adj=0.9, cex=1.1)
-    
-  #  points(head(ith$breaks, -1), # do not use latest break for proper plotting
-  #         -ith$counts,
-  #         type="h",       # histogram style
-  #         col="blue",     # color of bars
-  #         lend=4,         # 
-  #         lwd=5)          # line width for drawing symbols
-    
-  #    mtext(
-  #      paste0("Mean Locs:",round(ithMean, digits=3)),
-  #      side=1, 
-  #      line = -3, 
-  #      adj=0.1,
-  #      cex=0.6)
-  
-  #  abline(h=(-max(ith$counts))/2.0,col="blue", lty=3)
-  #    axis(1,
-  #        at=seq(floor(xrange[1]),ceiling(xrange[2])),
-  #        cex.axis=1.0,
-  #        padj=-1.5)
+```{r Confirmed, echo=FALSE, error=TRUE}
 
 ymax <- max(dataPointsConfirmed)
 yrange <- c(0, (floor(ymax/1000.0)+1)*1000)
@@ -159,28 +143,97 @@ text(
 ```
 
 
-```{r Deceased, echo=TRUE, error=TRUE, message=TRUE, warning=TRUE}
-plot(seq_along(dataPointsDeceased),dataPointsDeceased, xlab="days since 22/1/2020", ylab="deceased cases", main=paste0(country," deceased COVID-19 cases on ",cleanDate(tail(names(dataPointsDeceased),1))),type="l",col="dark red")
+```{r Deceased, echo=FALSE, error=TRUE, message=TRUE, warning=TRUE}
+plot(seq_along(dataPointsDeceased),dataPointsDeceased, xlab="days since 22/1/2020", ylab="deceased cases", main=paste0(country," deceased COVID-19 cases on ",cleanDate(tail(names(dataPointsDeceased),1))),type="l",col="dark red",lwd=2)
 ```
-```{r Recovered, echo=TRUE, error=TRUE, message=TRUE, warning=TRUE}
-plot(seq_along(dataPointsRecovered),dataPointsRecovered, xlab="days since 22/1/2020", ylab="recovered cases", main=paste0(country," recovered COVID-19 cases on ",cleanDate(tail(names(dataPointsRecovered),1))),type="l",col="orange")
+```{r Recovered, echo=FALSE, error=TRUE, message=TRUE, warning=TRUE}
+plot(seq_along(dataPointsRecovered),dataPointsRecovered, xlab="days since 22/1/2020", ylab="recovered cases", main=paste0(country," recovered COVID-19 cases on ",cleanDate(tail(names(dataPointsRecovered),1))),type="l",col="orange",lwd=2)
 ```
 
 ## Logarithmic Figures
 
-```{r Confirmed Log, echo=TRUE, error=TRUE}
+```{r Confirmed Log, echo=FALSE, error=TRUE}
 
-plot(seq_along(dataPointsConfirmed),log(dataPointsConfirmed), xlab="days since 22/1/2020", ylab="log(confirmed cases)", main=paste0(country, " confirmed COVID-19 cases on ",cleanDate(tail(names(dataPointsConfirmed),1))),type="l",col="dark green")
+plot(seq_along(dataPointsConfirmed),log(dataPointsConfirmed), xlab="days since 22/1/2020", ylab="log(confirmed cases)", main=paste0(country, " confirmed COVID-19 cases on ",cleanDate(tail(names(dataPointsConfirmed),1))),type="l",col="dark green",lwd=2)
 
 
 ```
 
 
-```{r Deceased Log, echo=TRUE, error=TRUE}
-plot(seq_along(dataPointsDeceased),log(dataPointsDeceased), xlab="days since 22/1/2020", ylab="log(deceased cases)", main=paste0(country, " deceased COVID-19 cases on ",cleanDate(tail(names(dataPointsDeceased),1))),type="l",col="dark red")
+```{r Deceased Log, echo=FALSE, error=TRUE}
+plot(seq_along(dataPointsDeceased),log(dataPointsDeceased), xlab="days since 22/1/2020", ylab="log(deceased cases)", main=paste0(country, " deceased COVID-19 cases on ",cleanDate(tail(names(dataPointsDeceased),1))),type="l",col="dark red",lwd=2)
 ```
 
 
-```{r Recovered Log, echo=TRUE, error=TRUE}
-plot(seq_along(dataPointsRecovered),log(dataPointsRecovered), xlab="days since 22/1/2020", ylab="log(recovered cases)", main=paste0(country, " recovered COVID-19 cases on ",cleanDate(tail(names(dataPointsRecovered),1))),type="l",col="orange")
+```{r Recovered Log, echo=FALSE, error=TRUE}
+plot(seq_along(dataPointsRecovered),log(dataPointsRecovered), xlab="days since 22/1/2020", ylab="log(recovered cases)", main=paste0(country, " recovered COVID-19 cases on ",cleanDate(tail(names(dataPointsRecovered),1))),type="l",col="orange",lwd=2)
 ```
+
+# Curve fit
+
+## Data Prep
+```{r Transpose, echo=TRUE, message=TRUE, warning=TRUE}
+library(data.table)
+df<-transpose(dataPointsConfirmed)
+df<-cbind(df,seq_along(dataPointsConfirmed))
+names(df)<-c("total","day")
+plot(total~day,data=df)
+```
+
+## Work on usable part of the dataset
+
+```{r message=TRUE, warning=TRUE}
+df2<- df[25:nrow(df),]
+head(df2,3)
+```
+
+## Initial fit parameters for SSlogis
+
+```{r message=TRUE, warning=TRUE}
+# Get initial estimate
+SS<-getInitial(total~SSlogis(day,alpha,xmid,scale),data=tail(df2,40),trace=TRUE)
+```
+
+## Fitting model
+
+```{r message=TRUE, warning=TRUE}
+fit<-nls(total~SSlogis(day,alpha,xmid,scale),data=df2)
+summary(fit)
+```
+## Goodness of fit estimate
+```{r}
+cor(df2$total,predict(fit))
+```
+## Predict data
+
+
+
+## Plot curve
+
+```{r}
+x=seq(0,100,1)
+y=seq(0,100,1)
+plot(x,y,
+     xlim=c(0,200),
+     ylim=c(0,31000),
+     xlab="days",
+     ylab="cases",
+     type="n",
+     main="Prediction of cases")
+
+ypred <- predict(fit,list(day=x))
+ypred_max <- max(ypred)
+
+points(total~day,data=df2)
+abline(h=ypred_max,lty=2)
+text(x=100,y=ypred_max*1.04,paste0("max=",format(ypred_max,digits=0,scientific = FALSE)))
+lines(x,ypred,col="dark green",lty=1,lwd=3)
+```
+
+# Links
+
+* https://www.statforbiology.com/nonlinearregression/usefulequations
+* https://www.r-bloggers.com/first-steps-with-non-linear-regression-in-r/
+  
+
+
